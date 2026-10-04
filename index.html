@@ -353,6 +353,29 @@
     margin-left: 0.5rem;
   }
 
+  /* ============ DEFINICIÓN DE BÚSQUEDA ============ */
+  .definicion-busqueda {
+    background: rgba(53,80,107,0.06);
+    border-left: 3px solid var(--institucional);
+    padding: 1rem 1.2rem;
+    border-radius: 3px;
+    margin-bottom: 1.5rem;
+  }
+  .definicion-busqueda p {
+    margin: 0 0 0.6rem;
+    font-size: 1rem;
+  }
+  .definicion-busqueda p:last-child {
+    margin-bottom: 0;
+  }
+  .definicion-busqueda .cita {
+    font-size: 0.8rem;
+    color: var(--institucional);
+    padding-top: 0.6rem;
+    border-top: 1px dashed rgba(53,80,107,0.3);
+    line-height: 1.5;
+  }
+
   .nota-dato {
     font-size: 0.85rem;
     color: var(--institucional);
@@ -536,11 +559,6 @@
     font-style: italic;
   }
 
-  @media (max-width: 480px) {
-    .umbral-fila { flex-direction: column; align-items: flex-start; }
-    .cociente-valor { font-size: 2rem; }
-  }
-
   /* ============ HUECOS ============ */
   #huecos {
     border-top: 1px dashed var(--vacio);
@@ -646,6 +664,48 @@
   .fuentes a:hover {
     color: var(--tinta);
   }
+
+  /* ============ MOBILE ============ */
+  @media (max-width: 480px) {
+    .umbral-fila {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .cociente-valor {
+      font-size: 2rem;
+    }
+
+    .leyenda-items {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      align-items: end;
+    }
+    .leyenda-item .swatch {
+      width: 100%;
+      max-width: 60px;
+      height: 12px;
+    }
+    .leyenda-item .rango {
+      font-size: 0.65rem;
+    }
+    .leyenda-separador {
+      display: none;
+    }
+    .leyenda-item.n-bajo {
+      grid-column: 1 / -1;
+      border-top: 1px dashed rgba(30,35,32,0.2);
+      padding-top: 8px;
+      margin-top: 4px;
+      flex-direction: row;
+      align-items: center;
+      gap: 8px;
+    }
+    .leyenda-item.n-bajo .swatch {
+      width: 32px;
+      max-width: 32px;
+    }
+  }
 </style>
 </head>
 <body>
@@ -664,8 +724,7 @@
     <div class="gancho">
       <strong>Córdoba</strong> aparece 9° en volumen de búsquedas.<br>
       <strong>Buenos Aires</strong>, 1°.<br>
-      Cuando se mide por población, <strong>Córdoba</strong> cae al 19°, <strong>Buenos Aires</strong> al 10°,
-      y <strong>Jujuy</strong> pasa al 1°.<br>
+      Cuando se mide por población, <strong>Córdoba</strong> cae al 19° y <strong>Buenos Aires</strong> al 10°.<br>
       <em>El ranking cambia según cómo se mida. ¿Cuál es el "correcto"?</em>
     </div>
 
@@ -690,15 +749,15 @@
       </p>
       <p>
         El <strong>Protocolo del Programa Alerta SOFÍA</strong> (Resolución 208/2019)
-        es el único documento oficial que enumera herramientas digitales.
-        Pero la sección 13.6 —titulada "Herramientas para la activación"— lista
-        <strong>canales de difusión de la alerta</strong>: página web, perfiles en redes
-        sociales, medios masivos, compañías de telefonía móvil y buscadores.
-        Menciona también el <strong>GMCNgine de ICMEC</strong> —descrito en la nota al pie
-        del protocolo como "un sistema innovador e inteligente de búsqueda y
-        comparación de imágenes"— pero en este protocolo se lo invoca únicamente
-        para orientar la difusión geográfica de la alerta, no como técnica
-        investigativa.
+        es el único de los documentos que revisamos que enumera herramientas
+        digitales. Pero la sección 13.6 —titulada "Herramientas para la
+        activación"— lista <strong>canales de difusión de la alerta</strong>: página web,
+        perfiles en redes sociales, medios masivos, compañías de telefonía móvil
+        y buscadores. Menciona también el <strong>GMCNgine de ICMEC</strong> —descrito en
+        la nota al pie del protocolo como "un sistema innovador e inteligente de
+        búsqueda y comparación de imágenes"— pero en este protocolo se lo invoca
+        únicamente para orientar la difusión geográfica de la alerta, no como
+        técnica investigativa.
       </p>
       <p>
         En la búsqueda que hicimos sobre el texto del protocolo, no aparecen
@@ -822,15 +881,33 @@
         <li>Ver rastros digitales caso por caso.</li>
       </ul>
       <p class="cita">
-        <strong>Fuente:</strong> Auditoría propia documentada en
-        <code>docs/auditoria_interna_2024.md</code> y
-        <code>docs/hallazgos_robustos.md</code>.
+        <strong>Fuente:</strong> Auditoría propia del dataset.
+        <strong>Método:</strong> chequeo aritmético fila por fila de que
+        <code>total = femenino + masculino + transgenero</code>, y
+        <code>total = de_0_a_12 + de_13_a_15 + de_16_a_17 + sin_dato</code>
+        (esta última categoría incluye los casos sin dato de edad), en las 24 jurisdicciones.
       </p>
     </div>
   </section>
 
   <section class="seccion" id="fenomeno">
     <h2>El fenómeno</h2>
+
+    <div class="definicion-busqueda">
+      <p>
+        <strong>Antes de mirar las cifras: una búsqueda registrada no es lo mismo
+        que una persona desaparecida.</strong> Con los datos públicos no podemos
+        saber si una misma persona generó más de una búsqueda, ni cuántas de
+        ellas siguen vigentes en cada provincia.
+      </p>
+      <p class="cita">
+        <strong>Fuente:</strong> glosario del RNIPME 2024. Las búsquedas en el
+        Registro tienen 3 estados: <em>"en trámite"</em> (vigentes),
+        <em>"paralizadas"</em> (dejadas sin efecto por la autoridad competente)
+        y <em>"cerradas"</em> (por mayoría de edad o fallecimiento).
+      </p>
+    </div>
+
     <p>
       <span id="total-nacional">—</span> búsquedas de NNyA registradas en 2024 según el RNIPME.
       Distribución por provincia. Hacé clic en una provincia para ver el detalle.
@@ -1012,10 +1089,14 @@
     <p>
       En una sociedad que produce más rastros digitales cada año, las
       búsquedas de NNyA muestran un patrón territorial muy desigual.
-      Esa desigualdad <strong>no encontramos evidencia de que la conectividad
-      digital la explique</strong>. Lo que no podemos saber —con los datos
-      públicos disponibles— es cuánto refleja diferencias reales del fenómeno
-      y cuánto refleja diferencias de capacidad institucional de registro.
+      Con los datos disponibles <strong>no encontramos evidencia de que la
+      conectividad digital explique esa desigualdad</strong>: la correlación
+      entre la tasa de búsquedas y los accesos a internet cada 100 hogares
+      es r = 0,226 sobre 22 provincias (IC 95% aproximado: −0,22 a 0,59),
+      compatible tanto con ninguna relación como con una moderada. Lo que no
+      podemos saber —con los datos públicos— es cuánto refleja diferencias
+      reales del fenómeno y cuánto refleja diferencias de capacidad
+      institucional de registro.
     </p>
 
     <div class="fuentes">
@@ -1038,7 +1119,7 @@
   let umbralN = 10;
   let metricaActual = 'absoluto';
   let provinciaSeleccionada = null;
-  let ordenRankingActual = []; // para el tooltip del ranking
+  let ordenRankingActual = [];
 
   const COLOR_N_BAJO = '#B9B4A8';
   const PALETA = ['#FFEDA0', '#FED976', '#FEB24C', '#FD8D3C', '#FC4E2A', '#E31A1C', '#800026'];
@@ -1238,7 +1319,7 @@
   }
 
   // ============================================================
-  // PANEL DE DETALLE (selector de provincia)
+  // PANEL DE DETALLE
   // ============================================================
   const detalleProv = document.getElementById('detalle-provincia');
   const bloqueNBajo = document.getElementById('bloque-n-bajo');
@@ -1329,7 +1410,6 @@
   selectUmbral.addEventListener('change', (e) => {
     umbralN = parseInt(e.target.value, 10);
 
-    // Actualizar el mapa
     if (geojsonLayer) {
       geojsonLayer.setStyle(estiloProvincia);
       geojsonLayer.eachLayer((layer) => {
@@ -1338,19 +1418,14 @@
       actualizarLeyenda();
     }
 
-    // Actualizar el ranking
     actualizarRanking();
-
-    // Actualizar el cociente
     actualizarCociente();
 
-    // Actualizar el nota-dato
     document.getElementById('nota-criterio').innerHTML =
       `Criterio visible: <strong>N≥${umbralN} se considera interpretable.</strong> ` +
       `Provincias con N&lt;${umbralN} se marcan con <span style="color:#8a5a10;">*</span> ` +
       `y no se usan como ancla de ratios.`;
 
-    // Si hay una provincia seleccionada, reevaluar el panel
     if (provinciaSeleccionada) {
       mostrarDetalle(provinciaSeleccionada);
     }
