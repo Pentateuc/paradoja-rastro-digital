@@ -1,0 +1,1458 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La paradoja del rastro digital</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+
+<style>
+  :root {
+    --papel: #EDEAE1;
+    --tinta: #1E2320;
+    --institucional: #35506B;
+    --pendiente: #B98B3E;
+    --vacio: #B9B4A8;
+    --alerta: #fffbe6;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--papel);
+    color: var(--tinta);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 1.125rem;
+    line-height: 1.65;
+    transition: background 1.2s ease, color 1.2s ease;
+  }
+
+  h1, h2 {
+    font-family: 'Newsreader', serif;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  .seccion {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 6rem 1.5rem;
+    opacity: 0.35;
+    transition: opacity 0.6s ease;
+  }
+
+  .seccion.en-foco { opacity: 1; }
+
+  /* ============ HERO ============ */
+  .hero {
+    padding: 6rem 1.5rem 4rem;
+    max-width: 720px;
+    margin: 0 auto;
+    opacity: 1;
+  }
+
+  .hero-titulo {
+    position: relative;
+    background: var(--institucional);
+    color: var(--papel);
+    padding: 2.5rem 2.2rem 2rem;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 3.5rem;
+    box-shadow: 0 2px 0 rgba(30,35,32,0.08);
+  }
+
+  .hero-titulo > *:not(.numero-fondo) {
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-titulo .numero-fondo {
+    position: absolute;
+    top: -2rem;
+    right: -1.5rem;
+    font-family: 'Newsreader', serif;
+    font-size: clamp(7rem, 15vw, 12rem);
+    font-weight: 600;
+    color: var(--papel);
+    opacity: 0.10;
+    line-height: 1;
+    z-index: 0;
+    pointer-events: none;
+    user-select: none;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .hero-titulo .kicker {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-weight: 600;
+    color: rgba(237,234,225,0.85);
+    padding-top: 0.7rem;
+    border-top: 2px solid rgba(237,234,225,0.35);
+    display: inline-block;
+    margin-bottom: 1.4rem;
+  }
+
+  .hero-titulo h1 {
+    font-size: clamp(1.8rem, 3.6vw, 2.9rem);
+    color: var(--papel);
+    margin: 0 0 1rem;
+    max-width: 90%;
+  }
+
+  .hero-titulo .subtitulo {
+    font-size: 1rem;
+    font-style: italic;
+    color: rgba(237,234,225,0.8);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .hero .gancho {
+    font-family: 'Newsreader', serif;
+    font-size: 1.25rem;
+    line-height: 1.75;
+    color: var(--tinta);
+    border-left: 3px solid var(--institucional);
+    padding-left: 1rem;
+    margin: 0 0 2rem;
+  }
+
+  .hero .gancho strong { color: var(--institucional); }
+
+  .hero .flecha-hero {
+    font-size: 1rem;
+    color: var(--institucional);
+    margin: 0;
+  }
+
+  .advertencia {
+    background: var(--alerta);
+    border: 1px solid var(--pendiente);
+    border-radius: 4px;
+    padding: 1rem 1.2rem;
+    margin: 1.5rem 0;
+    font-size: 0.95rem;
+  }
+
+  .advertencia strong { color: #8a5a10; }
+
+  .toggle {
+    display: inline-flex;
+    background: rgba(30,35,32,0.08);
+    border-radius: 999px;
+    padding: 4px;
+    margin: 1rem 0;
+  }
+
+  .toggle button {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 0.95rem;
+    padding: 0.5rem 1.2rem;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    border-radius: 999px;
+    color: var(--tinta);
+    transition: background 0.2s ease;
+  }
+
+  .toggle button.activo {
+    background: var(--institucional);
+    color: var(--papel);
+  }
+
+  .panel {
+    background: rgba(255,255,255,0.4);
+    border: 1px solid rgba(30,35,32,0.15);
+    border-radius: 4px;
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  label {
+    font-size: 0.9rem;
+    display: block;
+    margin-bottom: 0.4rem;
+    color: var(--institucional);
+  }
+
+  select {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 1rem;
+    padding: 0.4rem 0.6rem;
+    border: 1px solid var(--tinta);
+    border-radius: 3px;
+    background: var(--papel);
+    color: var(--tinta);
+  }
+
+  .hidden { display: none !important; }
+
+  #mapa-container {
+    width: 100%;
+    height: 520px;
+    margin-top: 1rem;
+    background: rgba(255,255,255,0.5);
+    border: 1px solid rgba(30,35,32,0.15);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .leaflet-container {
+    background: #E8E4D8 !important;
+    font-family: 'IBM Plex Sans', sans-serif !important;
+  }
+
+  .leaflet-control-attribution {
+    font-size: 9px !important;
+    background: rgba(255,255,255,0.7) !important;
+  }
+
+  .tooltip-mapa {
+    font-family: 'IBM Plex Sans', sans-serif !important;
+    font-size: 0.85rem !important;
+    padding: 4px 8px !important;
+    border-radius: 3px !important;
+    border: none !important;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15) !important;
+  }
+
+  .leyenda-mapa {
+    margin-top: 1.2rem;
+    padding: 0.8rem 0.6rem;
+    background: rgba(255,255,255,0.5);
+    border-radius: 4px;
+  }
+
+  .leyenda-titulo {
+    font-size: 0.78rem;
+    color: var(--institucional);
+    font-weight: 600;
+    margin-bottom: 0.6rem;
+  }
+
+  .leyenda-items {
+    display: flex;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .leyenda-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+  }
+
+  .leyenda-item .swatch {
+    width: 46px;
+    height: 14px;
+    border: 1px solid rgba(0,0,0,0.18);
+    border-radius: 2px;
+  }
+
+  .leyenda-item .rango {
+    font-size: 0.7rem;
+    color: var(--institucional);
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .leyenda-separador {
+    width: 1px;
+    height: 32px;
+    background: rgba(30,35,32,0.2);
+    align-self: center;
+    margin: 0 6px;
+  }
+
+  .leyenda-item.n-bajo .rango {
+    color: #8a5a10;
+    font-weight: 600;
+  }
+
+  .bloque-n-bajo {
+    margin-top: 1rem;
+    padding: 2.5rem 1.5rem;
+    text-align: center;
+    background: rgba(185,139,62,0.08);
+    border: 1px dashed var(--pendiente);
+    border-radius: 4px;
+  }
+
+  .bloque-n-bajo .numero-grande {
+    font-family: 'Newsreader', serif;
+    font-size: 4.5rem;
+    font-weight: 600;
+    color: var(--institucional);
+    line-height: 1;
+    margin-bottom: 0.4rem;
+  }
+
+  .bloque-n-bajo .etiqueta {
+    font-size: 1.05rem;
+    color: var(--tinta);
+    margin-bottom: 1.5rem;
+  }
+
+  .bloque-n-bajo .nota-etica-grande {
+    font-size: 0.9rem;
+    font-style: italic;
+    color: #8a5a10;
+    max-width: 440px;
+    margin: 1.2rem auto;
+    line-height: 1.5;
+  }
+
+  .bloque-n-bajo .datos-secundarios {
+    font-size: 0.9rem;
+    color: var(--institucional);
+    margin-top: 1.5rem;
+    padding-top: 1.2rem;
+    border-top: 1px dashed rgba(185,139,62,0.4);
+    line-height: 1.8;
+  }
+
+  .detalle {
+    margin-top: 1.5rem;
+    padding: 1rem 1.2rem;
+    background: rgba(53,80,107,0.06);
+    border-left: 3px solid var(--institucional);
+    border-radius: 3px;
+    font-size: 0.95rem;
+    display: none;
+  }
+
+  .detalle.visible { display: block; }
+
+  .detalle .nombre-provincia {
+    font-family: 'Newsreader', serif;
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin: 0 0 0.5rem;
+  }
+
+  .detalle .celda-n {
+    display: inline-block;
+    background: rgba(30,35,32,0.08);
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 0.85rem;
+    margin-left: 0.5rem;
+  }
+
+  .nota-dato {
+    font-size: 0.85rem;
+    color: var(--institucional);
+    margin-top: 0.8rem;
+    line-height: 1.5;
+  }
+
+  .nivel {
+    margin: 2rem 0;
+    padding: 1.5rem;
+    border: 1px solid rgba(30,35,32,0.15);
+    border-radius: 4px;
+    background: rgba(255,255,255,0.3);
+  }
+
+  .nivel .etiqueta-nivel {
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    color: var(--institucional);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  .nivel h3 {
+    font-family: 'Newsreader', serif;
+    font-size: 1.3rem;
+    margin: 0 0 0.8rem;
+  }
+
+  .nivel ul {
+    padding-left: 1.2rem;
+    margin: 0.5rem 0;
+  }
+
+  .nivel li { margin-bottom: 0.3rem; }
+
+  .nivel .sin-dato {
+    color: #8a5a10;
+    font-style: italic;
+    font-size: 0.95rem;
+  }
+
+  .nivel .cita {
+    font-size: 0.8rem;
+    color: var(--institucional);
+    margin-top: 1rem;
+    padding-top: 0.8rem;
+    border-top: 1px dashed rgba(53,80,107,0.3);
+  }
+
+  .nivel blockquote {
+    margin: 1rem 0;
+    padding: 0.8rem 1rem;
+    border-left: 3px solid var(--pendiente);
+    background: rgba(185,139,62,0.06);
+    font-size: 1rem;
+    font-style: italic;
+    color: #5a4a2a;
+  }
+
+  .cadena-institucional {
+    margin: 1.5rem auto;
+    max-width: 420px;
+  }
+
+  .cadena-institucional .flecha {
+    font-size: 1.1rem;
+    margin: 0.2rem 0;
+  }
+
+  .paso-cadena {
+    background: rgba(255,255,255,0.4);
+    border: 1px solid rgba(30,35,32,0.15);
+    border-radius: 4px;
+    padding: 0.9rem 1.2rem;
+    text-align: center;
+  }
+
+  .paso-cadena .titulo-paso {
+    font-family: 'Newsreader', serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    display: block;
+  }
+
+  .paso-cadena .subtitulo-paso {
+    font-size: 0.82rem;
+    color: var(--institucional);
+    display: block;
+    margin-top: 0.3rem;
+  }
+
+  .paso-destacado {
+    border-left: 3px solid var(--institucional);
+    background: rgba(53,80,107,0.06);
+  }
+
+  .paso-alerta {
+    border-left: 3px solid var(--pendiente);
+    background: rgba(185,139,62,0.08);
+  }
+
+  .criterios-activacion {
+    background: rgba(255,255,255,0.4);
+    border: 1px solid rgba(30,35,32,0.15);
+    border-radius: 4px;
+    padding: 1.2rem 1.5rem;
+    margin: 1.5rem 0;
+    font-size: 1rem;
+  }
+  .criterios-activacion ol { padding-left: 1.3rem; margin: 0.6rem 0 0; }
+  .criterios-activacion li { margin-bottom: 0.3rem; }
+
+  .flecha {
+    text-align: center;
+    font-size: 1.5rem;
+    color: var(--vacio);
+    margin: 0.5rem 0;
+  }
+
+  /* ============ CONTROL DE UMBRAL ============ */
+  .control-umbral {
+    padding-bottom: 1.4rem;
+    margin-bottom: 1.4rem;
+    border-bottom: 1px dashed rgba(30,35,32,0.2);
+  }
+
+  .control-umbral .etiqueta-umbral {
+    font-size: 0.85rem;
+    color: var(--institucional);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.7rem;
+  }
+
+  .umbral-fila {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .umbral-fila select {
+    flex-shrink: 0;
+  }
+
+  .cociente-display {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+  }
+
+  .cociente-valor {
+    font-family: 'Newsreader', serif;
+    font-size: 2.6rem;
+    font-weight: 600;
+    color: var(--institucional);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .cociente-unidad {
+    font-size: 0.85rem;
+    color: var(--institucional);
+    font-weight: 500;
+  }
+
+  .cociente-descripcion {
+    font-size: 0.85rem;
+    color: var(--institucional);
+    line-height: 1.5;
+    margin-top: 0.6rem;
+  }
+
+  .cociente-error {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 0.95rem;
+    color: #8a5a10;
+    font-style: italic;
+  }
+
+  @media (max-width: 480px) {
+    .umbral-fila { flex-direction: column; align-items: flex-start; }
+    .cociente-valor { font-size: 2rem; }
+  }
+
+  /* ============ HUECOS ============ */
+  #huecos {
+    border-top: 1px dashed var(--vacio);
+    border-bottom: 1px dashed var(--vacio);
+  }
+
+  body.modo-hueco {
+    background: var(--vacio);
+    color: var(--tinta);
+  }
+
+  #huecos h2 {
+    font-size: 2rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .huecos-intro {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 500;
+    line-height: 1.55;
+    color: var(--tinta);
+    margin: 0 0 1.8rem;
+  }
+
+  .huecos-leyenda {
+    font-size: 1rem;
+    color: var(--tinta);
+    line-height: 1.6;
+    margin-bottom: 2.2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px dashed rgba(30,35,32,0.25);
+  }
+
+  .huecos-leyenda strong {
+    color: var(--tinta);
+    font-weight: 600;
+  }
+
+  .grupo-huecos {
+    margin-bottom: 2.5rem;
+  }
+
+  .grupo-titulo {
+    font-family: 'Newsreader', serif;
+    font-size: 1.3rem;
+    font-weight: 600;
+    font-style: italic;
+    color: var(--tinta);
+    margin-bottom: 1.2rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(30,35,32,0.2);
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  .hueco-item {
+    padding: 0.9rem 0 0.9rem 1.2rem;
+    border-left: 2px dashed rgba(30,35,32,0.35);
+    margin-left: 2px;
+    margin-bottom: 1rem;
+  }
+
+  .hueco-item:last-child {
+    margin-bottom: 0;
+  }
+
+  .hueco-item .hueco-titulo {
+    font-family: 'Newsreader', serif;
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+    color: var(--tinta);
+    line-height: 1.3;
+  }
+
+  .hueco-item .hueco-texto {
+    font-size: 1rem;
+    margin: 0;
+    color: var(--tinta);
+    line-height: 1.6;
+  }
+
+  .cierre {
+    padding-top: 3rem;
+    padding-bottom: 6rem;
+  }
+
+  .fuentes {
+    font-size: 0.9rem;
+    color: var(--institucional);
+    line-height: 1.8;
+    margin-top: 2rem;
+  }
+
+  .fuentes a {
+    color: var(--institucional);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
+  }
+
+  .fuentes a:hover {
+    color: var(--tinta);
+  }
+</style>
+</head>
+<body>
+
+  <section class="hero">
+    <div class="hero-titulo">
+      <div class="numero-fondo" id="numero-fondo"></div>
+      <div class="kicker">La paradoja del rastro digital</div>
+      <h1>Dejamos rastros digitales a cada paso. ¿Cuánto de eso vemos cuando una persona desaparece?</h1>
+      <p class="subtitulo">
+        Lo que los registros públicos muestran —y lo que no— sobre las búsquedas
+        de niños, niñas y adolescentes en Argentina, 2024.
+      </p>
+    </div>
+
+    <div class="gancho">
+      <strong>Córdoba</strong> aparece 9° en volumen de búsquedas.<br>
+      <strong>Buenos Aires</strong>, 1°.<br>
+      Cuando se mide por población, <strong>Córdoba</strong> cae al 19°, <strong>Buenos Aires</strong> al 10°,
+      y <strong>Jujuy</strong> pasa al 1°.<br>
+      <em>El ranking cambia según cómo se mida. ¿Cuál es el "correcto"?</em>
+    </div>
+
+    <p class="flecha-hero">
+      ↓ Un recorrido por lo que se puede ver —y lo que no— en los datos abiertos de Argentina.
+    </p>
+  </section>
+
+  <section class="seccion" id="tres-niveles">
+    <h2>Los tres niveles del rastro</h2>
+    <p>
+      Cuando una persona desaparece, hay tres capas de información posibles.
+      La distancia entre ellas es lo que este proyecto hace visible.
+    </p>
+
+    <div class="nivel">
+      <div class="etiqueta-nivel">NIVEL 1</div>
+      <h3>Lo que podría existir</h3>
+      <p>
+        Cuando una persona desaparece, ¿qué rastros digitales pueden generarse
+        o consultarse durante una búsqueda? La respuesta pública es escasa.
+      </p>
+      <p>
+        El <strong>Protocolo del Programa Alerta SOFÍA</strong> (Resolución 208/2019)
+        es el único documento oficial que enumera herramientas digitales.
+        Pero la sección 13.6 —titulada "Herramientas para la activación"— lista
+        <strong>canales de difusión de la alerta</strong>: página web, perfiles en redes
+        sociales, medios masivos, compañías de telefonía móvil y buscadores.
+        Menciona también el <strong>GMCNgine de ICMEC</strong> —descrito en la nota al pie
+        del protocolo como "un sistema innovador e inteligente de búsqueda y
+        comparación de imágenes"— pero en este protocolo se lo invoca únicamente
+        para orientar la difusión geográfica de la alerta, no como técnica
+        investigativa.
+      </p>
+      <p>
+        En la búsqueda que hicimos sobre el texto del protocolo, no aparecen
+        los términos <strong>geolocalización</strong>, <strong>metadatos</strong>, <strong>IMEI</strong>,
+        <strong>GPS</strong>, <strong>historial de navegación</strong> ni <strong>pedidos judiciales a
+        compañías telefónicas</strong> con fines de investigación.
+      </p>
+      <p>
+        El <strong>informe RNIPME 2024</strong>, por su parte, no incluye una sección
+        metodológica que detalle las fuentes consultadas durante una búsqueda.
+      </p>
+      <p class="sin-dato">
+        → No hay fuente abierta que enumere qué rastros digitales se consultan
+        durante una búsqueda en Argentina. Este es el primer hueco.
+      </p>
+      <p class="cita">
+        <strong>Fuente:</strong> Protocolo del Programa Alerta SOFÍA (Res. 208/2019),
+        sección 13.6 y nota al pie del apartado 13.6.4; Informe RNIPME 2024
+        (sin sección metodológica sobre fuentes consultadas).
+      </p>
+    </div>
+
+    <div class="flecha">↓</div>
+
+    <div class="nivel">
+      <div class="etiqueta-nivel">NIVEL 2</div>
+      <h3>Lo que se publica</h3>
+
+      <p>Así se estructura, según el protocolo, la cadena que va de una denuncia a una alerta pública:</p>
+
+      <div class="cadena-institucional">
+        <div class="paso-cadena"><span class="titulo-paso">Denuncia</span></div>
+        <div class="flecha">↓</div>
+
+        <div class="paso-cadena"><span class="titulo-paso">Policía / Fiscalía</span></div>
+        <div class="flecha">↓</div>
+
+        <div class="paso-cadena paso-destacado">
+          <span class="titulo-paso">SIFEBU</span>
+          <span class="subtitulo-paso">Ministerio de Seguridad</span>
+        </div>
+        <div class="flecha">↓</div>
+
+        <div class="paso-cadena">
+          <span class="titulo-paso">Comité Nacional Interinstitucional</span>
+          <span class="subtitulo-paso">Ministerio de Seguridad (preside) · SENNAF · Ministerio Público Fiscal</span>
+        </div>
+        <div class="flecha">↓</div>
+
+        <div class="paso-cadena">
+          <span class="titulo-paso">Coordinación Operativa Nacional</span>
+          <span class="subtitulo-paso">Seguridad · MPF · ENACOM</span>
+        </div>
+        <div class="flecha">↓</div>
+
+        <div class="paso-cadena paso-alerta">
+          <span class="titulo-paso">Activación "Alerta SOFÍA"</span>
+          <span class="subtitulo-paso">si se cumplen los criterios</span>
+        </div>
+      </div>
+
+      <p class="nota-dato" style="text-align:center; font-style:italic;">
+        El Consejo Asesor (Fuerzas Federales, Línea 134, ONG Missing Children, Defensoría del Pueblo, Consejo de Procuradores) participa como órgano consultivo, sin poder de decisión sobre la activación.
+      </p>
+
+      <div class="criterios-activacion">
+        <p><strong>Para activarse, deben cumplirse estos criterios</strong> (Protocolo, pto. 13.1):</p>
+        <ol>
+          <li>Denuncia formal en sede policial o fiscal</li>
+          <li>Investigación penal preliminar en curso</li>
+          <li>Caso calificado como "Alto Riesgo Inminente"</li>
+          <li>Información suficiente y precisa para difundir</li>
+          <li>Que la difusión no perjudique al NNyA</li>
+          <li>Autorización judicial expresa</li>
+        </ol>
+      </div>
+
+      <p>Además del protocolo, otras dos fuentes describen el sistema:</p>
+      <ul>
+        <li><strong>RNIPME 2024:</strong> búsquedas de NNyA por provincia, género y
+          tramo etario. El registro distingue explícitamente entre búsquedas
+          <em>"en trámite"</em> (vigentes) y <em>"paralizadas"</em>.</li>
+        <li><strong>SIFEBU 2024:</strong> registros e intervenciones a nivel nacional
+          —no provincial—. Describe la articulación con otros organismos:
+          <blockquote>
+            "los registros de personas desaparecidas pueden ser cotejados
+            —caso por caso, no de manera automática— con los registros de
+            organismos como la CNRT, DNM, ANSES, RENAPER, SINTyS, pudiendo
+            así informarse las coincidencias a las autoridades a cargo de
+            las investigaciones."
+          </blockquote>
+        </li>
+      </ul>
+
+      <p class="sin-dato">→ Se publica agregado. No hay datos caso por caso.</p>
+      <p class="cita">
+        <strong>Fuente:</strong> Informe RNIPME 2024 (glosario de estados
+        registrales); Informe SIFEBU 2024 (articulación interinstitucional);
+        Protocolo Alerta SOFÍA, secciones 8.2, 13.1 y 13.3.
+      </p>
+    </div>
+
+    <div class="flecha">↓</div>
+
+    <div class="nivel">
+      <div class="etiqueta-nivel">NIVEL 3</div>
+      <h3>Lo que se puede auditar</h3>
+      <p><strong>Con fuentes abiertas se puede:</strong></p>
+      <ul>
+        <li>Verificar la consistencia interna del dataset.</li>
+        <li>Calcular tasas cada 100.000 NNyA por provincia.</li>
+        <li>Comparar el ranking absoluto con el ranking por tasa.</li>
+      </ul>
+      <p><strong>No se puede:</strong></p>
+      <ul>
+        <li>Detectar duplicación o reiterancia de casos (requiere microdatos).</li>
+        <li>Distinguir entre <em>"en trámite"</em> y <em>"paralizada"</em> a nivel
+          provincial —el RNIPME publica esa distinción a nivel regional,
+          no por jurisdicción individual.</li>
+        <li>Medir capacidad institucional por provincia.</li>
+        <li>Ver rastros digitales caso por caso.</li>
+      </ul>
+      <p class="cita">
+        <strong>Fuente:</strong> Auditoría propia documentada en
+        <code>docs/auditoria_interna_2024.md</code> y
+        <code>docs/hallazgos_robustos.md</code>.
+      </p>
+    </div>
+  </section>
+
+  <section class="seccion" id="fenomeno">
+    <h2>El fenómeno</h2>
+    <p>
+      <span id="total-nacional">—</span> búsquedas de NNyA registradas en 2024 según el RNIPME.
+      Distribución por provincia. Hacé clic en una provincia para ver el detalle.
+    </p>
+
+    <div class="panel">
+      <div class="toggle" id="toggle-metrica-mapa">
+        <button data-metrica="absoluto" class="activo">Cifra absoluta</button>
+        <button data-metrica="tasa">Tasa por 100.000 NNyA</button>
+      </div>
+
+      <div id="mapa-container"></div>
+
+      <div id="leyenda-mapa" class="leyenda-mapa"></div>
+
+      <label for="filtro-provincia" style="margin-top: 1.5rem;">Explorar provincia</label>
+      <select id="filtro-provincia">
+        <option value="">Elegí una provincia…</option>
+      </select>
+
+      <div id="bloque-n-bajo" class="bloque-n-bajo hidden"></div>
+
+      <div id="detalle-provincia" class="detalle"></div>
+
+      <p class="nota-dato">
+        Cuando el número de búsquedas es muy bajo (N&lt;10), no se muestran
+        los desgloses por género ni por edad. Eso protege a las personas
+        involucradas y evita lecturas que serían estadísticamente frágiles.
+      </p>
+    </div>
+
+    <h3 style="margin-top: 3rem; font-family: 'Newsreader', serif; font-size: 1.3rem;">
+      Desglose nacional por género y edad
+    </h3>
+    <p>
+      A nivel nacional los números son grandes y permiten desglosar sin riesgo.
+    </p>
+
+    <div class="panel">
+      <label for="filtro-nacional">Ver por</label>
+      <select id="filtro-nacional">
+        <option value="genero">Género</option>
+        <option value="edad">Tramo etario</option>
+      </select>
+
+      <canvas id="grafico-nacional" style="max-height: 280px; margin-top: 1rem;"></canvas>
+    </div>
+  </section>
+
+  <section class="seccion" id="cambio">
+    <h2>El cambio</h2>
+    <p>
+      El ranking de provincias cambia según la métrica que se use. No es que
+      una sea "la correcta": cada una cuenta algo distinto.
+    </p>
+
+    <div class="advertencia">
+      <strong>⚠ Antes de mirar:</strong> una tasa alta <em>no significa</em> más
+      casos reales. Refleja cómo se registran las búsquedas y cuánta población
+      NNyA hay en la provincia. Una tasa baja puede reflejar subregistro,
+      no ausencia del fenómeno.
+    </div>
+
+    <div class="toggle" id="toggle-metrica">
+      <button data-metrica="absoluto" class="activo">Cifra absoluta</button>
+      <button data-metrica="tasa">Tasa por 100.000 NNyA</button>
+    </div>
+
+    <div class="panel">
+
+      <div class="control-umbral">
+        <div class="etiqueta-umbral">Umbral mínimo de casos por provincia</div>
+        <div class="umbral-fila">
+          <select id="select-umbral">
+            <option value="0">Sin umbral (N ≥ 0)</option>
+            <option value="1">N ≥ 1</option>
+            <option value="5">N ≥ 5</option>
+            <option value="10" selected>N ≥ 10</option>
+            <option value="20">N ≥ 20</option>
+          </select>
+          <div class="cociente-display">
+            <div class="cociente-valor" id="cociente-valor">—</div>
+            <div class="cociente-unidad">veces más alta la tasa máxima frente a la mínima</div>
+          </div>
+        </div>
+        <div class="cociente-descripcion" id="cociente-descripcion"></div>
+      </div>
+
+      <canvas id="grafico-ranking" style="max-height: 480px;"></canvas>
+
+      <p class="nota-dato" id="nota-criterio">
+        Criterio visible: <strong>N≥10 se considera interpretable.</strong>
+        Provincias con N&lt;10 se marcan con <span style="color:#8a5a10;">*</span>
+        y no se usan como ancla de ratios.
+      </p>
+    </div>
+  </section>
+
+  <section class="seccion" id="huecos">
+    <h2>Los huecos</h2>
+
+    <p class="huecos-intro">
+      Entre el nivel 1 (lo que podría existir) y el nivel 3 (lo que se puede
+      auditar) hay una distancia que los datos públicos no permiten cerrar.
+    </p>
+
+    <p class="huecos-leyenda">
+      Los bordes punteados marcan datos que <strong>no existen en fuentes
+      públicas</strong>, verificados contra los documentos que revisamos para
+      este proyecto.
+    </p>
+
+    <div class="grupo-huecos">
+      <div class="grupo-titulo">Porque los datos están agregados</div>
+
+      <div class="hueco-item">
+        <div class="hueco-titulo">Duplicación / reiterancia de casos</div>
+        <p class="hueco-texto">
+          Si una misma persona generó varias búsquedas no se puede saber:
+          el dataset está agregado por provincia. Requeriría microdatos.
+        </p>
+      </div>
+
+      <div class="hueco-item">
+        <div class="hueco-titulo">Estado registral a nivel provincial</div>
+        <p class="hueco-texto">
+          RNIPME distingue "en trámite" y "paralizada" a nivel regional,
+          pero no hay desglose por jurisdicción individual en los datos
+          disponibles.
+        </p>
+      </div>
+
+      <div class="hueco-item">
+        <div class="hueco-titulo">Contraste RNIPME ↔ SIFEBU por provincia</div>
+        <p class="hueco-texto">
+          Las cifras de SIFEBU disponibles son nacionales. No permiten
+          un contraste territorial con RNIPME.
+        </p>
+      </div>
+    </div>
+
+    <div class="grupo-huecos">
+      <div class="grupo-titulo">Porque no hay fuente abierta</div>
+
+      <div class="hueco-item">
+        <div class="hueco-titulo">Rastros digitales durante una búsqueda</div>
+        <p class="hueco-texto">
+          Qué registros digitales intervienen en una búsqueda no está
+          en los datos públicos que revisamos.
+        </p>
+      </div>
+
+      <div class="hueco-item">
+        <div class="hueco-titulo">Capacidad institucional por provincia</div>
+        <p class="hueco-texto">
+          Fiscalías, personal y presupuesto por jurisdicción no están
+          en fuentes abiertas revisadas.
+        </p>
+      </div>
+    </div>
+
+    <div class="grupo-huecos">
+      <div class="grupo-titulo">Porque la muestra no alcanza</div>
+
+      <div class="hueco-item">
+        <div class="hueco-titulo">Grooming por provincia</div>
+        <p class="hueco-texto">
+          La Encuesta Nacional sobre Grooming (2021) no tiene tamaño
+          muestral por provincia: no permite estimaciones territoriales
+          confiables. Por eso no aparece en el análisis provincial de este
+          proyecto, ni puede relacionarse con las búsquedas de NNyA.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion cierre" id="cierre">
+    <h2>Lo que queda abierto</h2>
+    <p>
+      En una sociedad que produce más rastros digitales cada año, las
+      búsquedas de NNyA muestran un patrón territorial muy desigual.
+      Esa desigualdad <strong>no encontramos evidencia de que la conectividad
+      digital la explique</strong>. Lo que no podemos saber —con los datos
+      públicos disponibles— es cuánto refleja diferencias reales del fenómeno
+      y cuánto refleja diferencias de capacidad institucional de registro.
+    </p>
+
+    <div class="fuentes">
+      <strong>Fuentes:</strong><br>
+      <a href="https://www.argentina.gob.ar/justicia/rnipme" target="_blank" rel="noopener">RNIPME 2024</a> — Ministerio de Justicia de la Nación<br>
+      <a href="https://www.argentina.gob.ar/seguridad/sifebu" target="_blank" rel="noopener">SIFEBU 2024</a> — Ministerio de Seguridad de la Nación<br>
+      <a href="https://www.boletinoficial.gob.ar/detalleAviso/primera/203921/20190322" target="_blank" rel="noopener">Protocolo Programa Alerta SOFÍA</a> — Resolución 208/2019<br>
+      <a href="https://www.indec.gob.ar/indec/web/Nivel3-Tema-2-24" target="_blank" rel="noopener">INDEC</a> — Proyecciones de población 2022-2040, Censo 2022<br>
+      <a href="https://www.enacom.gob.ar/" target="_blank" rel="noopener">ENACOM</a> — Accesos a internet por provincia, 2024
+    </div>
+  </section>
+
+<script src="datos_web.js"></script>
+<script src="datos_geo.js"></script>
+
+<script>
+  // ============================================================
+  // ESTADO
+  // ============================================================
+  let umbralN = 10;
+  let metricaActual = 'absoluto';
+  let provinciaSeleccionada = null;
+  let ordenRankingActual = []; // para el tooltip del ranking
+
+  const COLOR_N_BAJO = '#B9B4A8';
+  const PALETA = ['#FFEDA0', '#FED976', '#FEB24C', '#FD8D3C', '#FC4E2A', '#E31A1C', '#800026'];
+  const CORTES_ABSOLUTO = [0, 20, 60, 120, 280, 600, 1000, 9999];
+  const CORTES_TASA = [0, 10, 30, 60, 90, 130, 160, 9999];
+
+  document.getElementById('numero-fondo').textContent =
+    datos.provincias.reduce((acc, p) => acc + p.total, 0).toLocaleString('es-AR');
+
+  document.getElementById('total-nacional').textContent =
+    datos.provincias.reduce((acc, p) => acc + p.total, 0).toLocaleString('es-AR');
+
+  // ============================================================
+  // SCROLLYTELLING
+  // ============================================================
+  const secciones = document.querySelectorAll('.seccion');
+  const observador = new IntersectionObserver((entradas) => {
+    entradas.forEach((entrada) => {
+      if (entrada.isIntersecting) {
+        entrada.target.classList.add('en-foco');
+      } else {
+        entrada.target.classList.remove('en-foco');
+      }
+      if (entrada.target.id === 'huecos') {
+        document.body.classList.toggle('modo-hueco', entrada.isIntersecting);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -10% 0px' });
+  secciones.forEach((s) => observador.observe(s));
+
+  // ============================================================
+  // HELPERS
+  // ============================================================
+  function colorPorValor(valor, cortes) {
+    for (let i = 0; i < cortes.length - 1; i++) {
+      if (valor < cortes[i + 1]) return PALETA[i];
+    }
+    return PALETA[PALETA.length - 1];
+  }
+
+  function fmt(num, dec = 1) {
+    return num.toFixed(dec).replace('.', ',');
+  }
+
+  // ============================================================
+  // CÁLCULO DE UMBRAL Y COCIENTE
+  // ============================================================
+  function provinciasEnCorte() {
+    return datos.provincias.filter((p) => p.total >= umbralN);
+  }
+
+  function calcularCociente() {
+    const enCorte = provinciasEnCorte();
+    if (enCorte.length < 2) return { error: 'pocas' };
+    const tasas = enCorte.map((p) => p.tasa);
+    const min = Math.min(...tasas);
+    const max = Math.max(...tasas);
+    if (min === 0) return { error: 'cero' };
+    return {
+      ratio: max / min,
+      min, max,
+      minProv: enCorte.find((p) => p.tasa === min),
+      maxProv: enCorte.find((p) => p.tasa === max),
+      n: enCorte.length
+    };
+  }
+
+  function actualizarCociente() {
+    const elValor = document.getElementById('cociente-valor');
+    const elDesc = document.getElementById('cociente-descripcion');
+    const r = calcularCociente();
+
+    if (r.error === 'cero') {
+      elValor.textContent = '—';
+      elValor.style.fontSize = '1.2rem';
+      elValor.classList.add('cociente-error');
+      elDesc.textContent = 'No calculable: hay una tasa de cero en el conjunto (La Rioja). El cociente entre dos valores requiere que el mínimo sea mayor que cero.';
+    } else if (r.error === 'pocas') {
+      elValor.textContent = '—';
+      elValor.classList.add('cociente-error');
+      elDesc.textContent = 'Menos de dos provincias dentro del corte.';
+    } else {
+      elValor.classList.remove('cociente-error');
+      elValor.style.fontSize = '';
+      elValor.textContent = fmt(r.ratio, 1) + '×';
+      elDesc.innerHTML = `entre <strong>${r.maxProv.nombre}</strong> (${fmt(r.max, 1)} × 100k) y <strong>${r.minProv.nombre}</strong> (${fmt(r.min, 1)} × 100k). Provincias dentro del corte: ${r.n}.`;
+    }
+  }
+
+  // ============================================================
+  // MAPA
+  // ============================================================
+  const mapa = L.map('mapa-container', {
+    zoomControl: true,
+    attributionControl: true,
+    scrollWheelZoom: false,
+    zoomSnap: 0.5,
+    maxBoundsViscosity: 0.7
+  });
+
+  mapa.setMaxBounds([[-60, -80], [-18, -50]]);
+
+  let geojsonLayer = null;
+
+  function estiloProvincia(feature) {
+    const nombre = feature.properties.NAM;
+    const p = datos.provincias.find((x) => x.nombre === nombre);
+    if (!p) return { fillColor: COLOR_N_BAJO, weight: 0.5, color: '#888', fillOpacity: 0.7 };
+
+    const fuera = p.total < umbralN;
+    let fillColor;
+    if (fuera) {
+      fillColor = COLOR_N_BAJO;
+    } else {
+      const valor = metricaActual === 'absoluto' ? p.total : p.tasa;
+      const cortes = metricaActual === 'absoluto' ? CORTES_ABSOLUTO : CORTES_TASA;
+      fillColor = colorPorValor(valor, cortes);
+    }
+
+    const esSeleccionada = provinciaSeleccionada === nombre;
+    return {
+      fillColor: fillColor,
+      weight: esSeleccionada ? 2.5 : 0.5,
+      color: esSeleccionada ? '#1E2320' : '#666',
+      fillOpacity: 0.85
+    };
+  }
+
+  function tooltipProvincia(feature) {
+    const nombre = feature.properties.NAM;
+    const p = datos.provincias.find((x) => x.nombre === nombre);
+    if (!p) return nombre;
+    const fuera = p.total < umbralN;
+    const valor = metricaActual === 'absoluto'
+      ? `N = ${p.total}`
+      : `${p.tasa.toFixed(2)} × 100k`;
+    const marca = fuera ? ` *` : '';
+    const nota = fuera ? `<br><em style="font-size:0.75rem;color:#8a5a10;">Por debajo del umbral N≥${umbralN}: no se usa como ancla de ratios.</em>` : '';
+    return `<strong>${nombre}${marca}</strong><br>${valor}${nota}`;
+  }
+
+  function clickProvincia(feature) {
+    const nombre = feature.properties.NAM;
+    provinciaSeleccionada = nombre;
+    document.getElementById('filtro-provincia').value = nombre;
+    mostrarDetalle(nombre);
+    if (geojsonLayer) geojsonLayer.setStyle(estiloProvincia);
+  }
+
+  geojsonLayer = L.geoJSON(geo_argentina, {
+    style: estiloProvincia,
+    onEachFeature: (feature, layer) => {
+      layer.bindTooltip(tooltipProvincia, { className: 'tooltip-mapa', sticky: true });
+      layer.on('click', () => clickProvincia(feature));
+      layer.on('mouseover', function () {
+        this.setStyle({ weight: 2, color: '#1E2320' });
+      });
+      layer.on('mouseout', function () {
+        geojsonLayer.resetStyle(this);
+      });
+    }
+  }).addTo(mapa);
+
+  mapa.fitBounds([[-55.5, -73.5], [-21.5, -53.5]], { padding: [20, 20] });
+
+  // ============================================================
+  // LEYENDA DEL MAPA
+  // ============================================================
+  function actualizarLeyenda() {
+    const leyenda = document.getElementById('leyenda-mapa');
+    const cortes = metricaActual === 'absoluto' ? CORTES_ABSOLUTO : CORTES_TASA;
+    const unidad = metricaActual === 'absoluto' ? '' : 'k';
+    const titulo = metricaActual === 'absoluto'
+      ? 'Búsquedas registradas (cifra absoluta)'
+      : 'Tasa cada 100.000 NNyA';
+
+    let html = `<div class="leyenda-titulo">${titulo}</div>`;
+    html += `<div class="leyenda-items">`;
+
+    for (let i = 0; i < cortes.length - 1; i++) {
+      const desde = cortes[i];
+      const hastaBruto = cortes[i + 1];
+      const hasta = hastaBruto === 9999 ? '+' : hastaBruto;
+      html += `<div class="leyenda-item">
+        <div class="swatch" style="background:${PALETA[i]}"></div>
+        <div class="rango">${desde}–${hasta}${unidad}</div>
+      </div>`;
+    }
+
+    html += `<div class="leyenda-separador"></div>`;
+    html += `<div class="leyenda-item n-bajo">
+      <div class="swatch" style="background:${COLOR_N_BAJO}"></div>
+      <div class="rango">N&lt;${umbralN} *</div>
+    </div>`;
+    html += `</div>`;
+    leyenda.innerHTML = html;
+  }
+
+  // ============================================================
+  // PANEL DE DETALLE (selector de provincia)
+  // ============================================================
+  const detalleProv = document.getElementById('detalle-provincia');
+  const bloqueNBajo = document.getElementById('bloque-n-bajo');
+  const selectProv = document.getElementById('filtro-provincia');
+
+  datos.provincias.forEach((p) => {
+    const opt = document.createElement('option');
+    opt.value = p.nombre;
+    opt.textContent = p.nombre;
+    selectProv.appendChild(opt);
+  });
+
+  function mostrarDetalle(nombre) {
+    const p = datos.provincias.find((x) => x.nombre === nombre);
+    if (!p) return;
+    const nBajo = p.total < umbralN;
+
+    if (nBajo) {
+      bloqueNBajo.classList.remove('hidden');
+      detalleProv.classList.remove('visible');
+      const plural = p.total === 1 ? 'búsqueda registrada' : 'búsquedas registradas';
+      bloqueNBajo.innerHTML = `
+        <div class="numero-grande">${p.total}</div>
+        <div class="etiqueta">${plural} en ${p.nombre}, 2024</div>
+        <p class="nota-etica-grande">
+          Con tan pocos casos (por debajo del umbral N≥${umbralN}), no se muestra desglose por género ni edad:
+          eso protegería a las personas involucradas y evitaría lecturas
+          estadísticamente frágiles.
+        </p>
+        <div class="datos-secundarios">
+          Tasa cada 100.000 NNyA: <strong>${p.tasa.toFixed(2)}</strong><br>
+          Población 0-17 años: ${p.pob_0_17.toLocaleString('es-AR')}
+        </div>
+      `;
+    } else {
+      bloqueNBajo.classList.add('hidden');
+      let html = `<p class="nombre-provincia">${p.nombre}
+        <span class="celda-n">N = ${p.total}</span></p>`;
+      html += `<p>Tasa cada 100.000 NNyA: <strong>${p.tasa.toFixed(2)}</strong></p>`;
+      html += `<p>Población 0-17 años: ${p.pob_0_17.toLocaleString('es-AR')}</p>`;
+      html += `<p style="margin-top:0.8rem;font-size:0.88rem;color:#35506B;">
+        Desglose por tramo etario: ${p.de_0_a_12} (0-12) · ${p.de_13_a_15} (13-15) · ${p.de_16_a_17} (16-17)${p.sin_dato ? ' · ' + p.sin_dato + ' sin dato' : ''}
+      </p>`;
+      detalleProv.innerHTML = html;
+      detalleProv.classList.add('visible');
+    }
+  }
+
+  selectProv.addEventListener('change', (e) => {
+    const nombre = e.target.value;
+    provinciaSeleccionada = nombre || null;
+    if (!nombre) {
+      bloqueNBajo.classList.add('hidden');
+      detalleProv.classList.remove('visible');
+    } else {
+      mostrarDetalle(nombre);
+    }
+    if (geojsonLayer) geojsonLayer.setStyle(estiloProvincia);
+  });
+
+  // ============================================================
+  // TOGGLE DE MÉTRICA
+  // ============================================================
+  function cambiarMetrica(nuevaMetrica) {
+    metricaActual = nuevaMetrica;
+    document.querySelectorAll('#toggle-metrica button, #toggle-metrica-mapa button').forEach((b) => {
+      b.classList.toggle('activo', b.dataset.metrica === nuevaMetrica);
+    });
+    if (geojsonLayer) {
+      geojsonLayer.setStyle(estiloProvincia);
+      geojsonLayer.eachLayer((layer) => {
+        layer.setTooltipContent(tooltipProvincia(layer.feature));
+      });
+      actualizarLeyenda();
+    }
+    actualizarRanking();
+  }
+
+  document.querySelectorAll('#toggle-metrica button, #toggle-metrica-mapa button').forEach((btn) => {
+    btn.addEventListener('click', () => cambiarMetrica(btn.dataset.metrica));
+  });
+
+  // ============================================================
+  // CONTROL DE UMBRAL
+  // ============================================================
+  const selectUmbral = document.getElementById('select-umbral');
+
+  selectUmbral.addEventListener('change', (e) => {
+    umbralN = parseInt(e.target.value, 10);
+
+    // Actualizar el mapa
+    if (geojsonLayer) {
+      geojsonLayer.setStyle(estiloProvincia);
+      geojsonLayer.eachLayer((layer) => {
+        layer.setTooltipContent(tooltipProvincia(layer.feature));
+      });
+      actualizarLeyenda();
+    }
+
+    // Actualizar el ranking
+    actualizarRanking();
+
+    // Actualizar el cociente
+    actualizarCociente();
+
+    // Actualizar el nota-dato
+    document.getElementById('nota-criterio').innerHTML =
+      `Criterio visible: <strong>N≥${umbralN} se considera interpretable.</strong> ` +
+      `Provincias con N&lt;${umbralN} se marcan con <span style="color:#8a5a10;">*</span> ` +
+      `y no se usan como ancla de ratios.`;
+
+    // Si hay una provincia seleccionada, reevaluar el panel
+    if (provinciaSeleccionada) {
+      mostrarDetalle(provinciaSeleccionada);
+    }
+  });
+
+  // ============================================================
+  // GRÁFICO NACIONAL
+  // ============================================================
+  const selectNac = document.getElementById('filtro-nacional');
+  const ctxNac = document.getElementById('grafico-nacional').getContext('2d');
+  const graficoNac = new Chart(ctxNac, {
+    type: 'bar',
+    data: {
+      labels: Object.keys(datos.nacional.genero),
+      datasets: [{
+        label: 'Búsquedas a nivel nacional',
+        data: Object.values(datos.nacional.genero),
+        backgroundColor: '#35506B',
+        borderRadius: 3
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: { y: { beginAtZero: true } }
+    }
+  });
+
+  selectNac.addEventListener('change', (e) => {
+    const campo = e.target.value;
+    const bloque = campo === 'genero' ? datos.nacional.genero : datos.nacional.edad;
+    graficoNac.data.labels = Object.keys(bloque);
+    graficoNac.data.datasets[0].data = Object.values(bloque);
+    graficoNac.update();
+  });
+
+  // ============================================================
+  // GRÁFICO RANKING
+  // ============================================================
+  const ctxRank = document.getElementById('grafico-ranking').getContext('2d');
+  const graficoRank = new Chart(ctxRank, {
+    type: 'bar',
+    data: { labels: [], datasets: [{ label: '', data: [], backgroundColor: [], borderRadius: 3 }] },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            title: (items) => {
+              const p = ordenRankingActual[items[0].dataIndex];
+              if (!p) return '';
+              return p.nombre + (p.total < umbralN ? ' *' : '');
+            },
+            label: (item) => {
+              const p = ordenRankingActual[item.dataIndex];
+              if (!p) return '';
+              const lineas = [];
+              lineas.push(`Búsquedas: ${p.total}`);
+              lineas.push(`Tasa: ${p.tasa.toFixed(2)} × 100k`);
+              if (p.total < umbralN) {
+                lineas.push(`⚠ Por debajo del umbral N≥${umbralN}: no se usa como ancla de ratios.`);
+              }
+              return lineas;
+            }
+          }
+        }
+      },
+      scales: { x: { beginAtZero: true } }
+    }
+  });
+
+  function actualizarRanking() {
+    const orden = [...datos.provincias].sort((a, b) =>
+      metricaActual === 'absoluto' ? b.total - a.total : b.tasa - a.tasa
+    );
+    ordenRankingActual = orden;
+
+    graficoRank.data.labels = orden.map((p) => {
+      const marca = p.total < umbralN ? ' *' : '';
+      return p.nombre + marca;
+    });
+    graficoRank.data.datasets[0].data = orden.map((p) =>
+      metricaActual === 'absoluto' ? p.total : p.tasa
+    );
+    graficoRank.data.datasets[0].backgroundColor = orden.map((p) =>
+      p.total < umbralN ? COLOR_N_BAJO : '#35506B'
+    );
+    graficoRank.data.datasets[0].label = metricaActual === 'absoluto'
+      ? 'Búsquedas registradas'
+      : 'Tasa cada 100.000 NNyA';
+    graficoRank.update();
+  }
+
+  // ============================================================
+  // INICIALIZACIÓN
+  // ============================================================
+  actualizarLeyenda();
+  actualizarRanking();
+  actualizarCociente();
+</script>
+
+</body>
+</html>
