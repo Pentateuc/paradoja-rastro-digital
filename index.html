@@ -692,6 +692,51 @@
     line-height: 1.6;
   }
 
+  .pedidos-datos {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(30,35,32,0.25);
+  }
+
+  .pedidos-datos .grupo-titulo {
+    margin-bottom: 1.2rem;
+  }
+
+  .pedidos-datos > p {
+    font-size: 1rem;
+    line-height: 1.6;
+    margin: 0 0 1rem;
+  }
+
+  .pedidos-datos > p em {
+    color: var(--institucional);
+    font-style: italic;
+  }
+
+  .pedidos-lista {
+    list-style: none;
+    padding-left: 0;
+    margin: 1.5rem 0 0;
+  }
+
+  .pedidos-lista li {
+    padding: 0.9rem 0 0.9rem 1.2rem;
+    border-left: 2px solid var(--institucional);
+    margin-bottom: 0.9rem;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--tinta);
+  }
+
+  .pedidos-lista li strong {
+    display: block;
+    font-family: 'Newsreader', serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+    color: var(--institucional);
+  }
+
   .cierre {
     padding-top: 3rem;
     padding-bottom: 6rem;
@@ -1279,6 +1324,67 @@
         </p>
       </div>
     </div>
+
+    <div class="pedidos-datos">
+      <p class="grupo-titulo">Lo que haría falta para responder las preguntas abiertas</p>
+
+      <p>
+        Los huecos documentados no son una crítica: son una lista de lo que
+        hoy no se puede responder con datos públicos. Cuatro de los cinco
+        tienen una especificación concreta de qué haría falta para que sí
+        se pudiera.
+      </p>
+
+      <p>
+        <em>Uno de los huecos —qué rastros digitales se consultan durante
+        una búsqueda activa— no se incluye como pedido. A diferencia de los
+        demás, no es evidente que deba publicarse con más detalle: podría
+        comprometer la efectividad de búsquedas en curso. Se documenta como
+        límite de información, no como solicitud.</em>
+      </p>
+
+      <ul class="pedidos-lista">
+        <li>
+          <strong>Metodología del registro.</strong> El informe 2024 no
+          define qué constituye "una búsqueda" como unidad de conteo.
+          Publicar esa definición permitiría comparar cifras entre años
+          sin la ambigüedad actual sobre si un cambio refleja más casos o
+          más carga administrativa.
+        </li>
+        <li>
+          <strong>Estado registral por provincia.</strong> Hoy RNIPME
+          distingue "en trámite" y "paralizada" solo a nivel regional. Con
+          desagregación por jurisdicción se podría comparar cada provincia
+          contra sí misma en el tiempo, sin usar el total nacional como
+          referencia.
+        </li>
+        <li>
+          <strong>Personas únicas, anonimizadas.</strong> Los datos
+          actuales son búsquedas, no personas. Un conteo de personas únicas
+          permitiría estimar la reiterancia que hoy no se puede medir, sin
+          exponer ningún caso individual.
+        </li>
+        <li>
+          <strong>SIFEBU con desagregación provincial.</strong> Sus cifras
+          actuales son nacionales. Con jurisdicción se podría contrastar
+          con RNIPME y ver dónde coinciden y dónde no, que es lo que hoy
+          no es posible.
+        </li>
+        <li>
+          <strong>Capacidad institucional por provincia.</strong> Fiscalías,
+          personal y presupuesto con competencia penal por jurisdicción. Es
+          la variable candidata para explicar la dispersión de tasas cuando
+          la conectividad no la explica.
+        </li>
+      </ul>
+
+      <p class="nota-dato">
+        Los pedidos están redactados como especificación de datos abiertos,
+        no como reclamo. Varios se pueden responder con información que los
+        organismos ya administran; el problema es que no se publica con el
+        nivel de desagregación necesario para el análisis territorial.
+      </p>
+    </div>
   </section>
 
   <section class="seccion cierre" id="cierre">
@@ -1568,7 +1674,6 @@
     if (geojsonLayer) geojsonLayer.setStyle(estiloProvincia);
   });
 
-  // Click fuera de provincia = deseleccionar
   mapa.on('click', function () {
     if (provinciaSeleccionada) {
       provinciaSeleccionada = null;
@@ -1596,6 +1701,10 @@
   });
 
   const selectUmbral = document.getElementById('select-umbral');
+
+  // Forzar valor por defecto: evita que el navegador restaure una selección previa
+  selectUmbral.value = '10';
+  umbralN = 10;
 
   selectUmbral.addEventListener('change', (e) => {
     umbralN = parseInt(e.target.value, 10);
