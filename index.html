@@ -117,6 +117,20 @@
     line-height: 1.5;
   }
 
+  .hipotesis-hero {
+    font-family: 'Newsreader', serif;
+    font-size: 1.1rem;
+    line-height: 1.65;
+    color: var(--tinta);
+    padding: 1.2rem 1.4rem;
+    background: rgba(53,80,107,0.06);
+    border-left: 3px solid var(--institucional);
+    border-radius: 3px;
+    margin: 0 0 2rem;
+  }
+
+  .hipotesis-hero strong { color: var(--institucional); }
+
   .hero .gancho {
     font-family: 'Newsreader', serif;
     font-size: 1.25rem;
@@ -282,6 +296,22 @@
     font-weight: 600;
   }
 
+  .titulo-tabla {
+    font-family: 'Newsreader', serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--tinta);
+    margin: 0 0 0.6rem;
+    line-height: 1.3;
+  }
+
+  .fuente-tabla {
+    font-size: 0.78rem;
+    color: var(--institucional);
+    margin-top: 0.6rem;
+    line-height: 1.5;
+  }
+
   .bloque-n-bajo {
     margin-top: 1rem;
     padding: 2.5rem 1.5rem;
@@ -374,7 +404,6 @@
     line-height: 1.5;
   }
 
-  /* ============ GRÁFICO SERIE 2020-2024 ============ */
   .grafico-serie {
     margin: 2rem 0;
     padding: 1.5rem 1.2rem 1rem;
@@ -671,7 +700,7 @@
   .fuentes {
     font-size: 0.9rem;
     color: var(--institucional);
-    line-height: 1.8;
+    line-height: 1.9;
     margin-top: 2rem;
   }
 
@@ -741,6 +770,12 @@
       </p>
     </div>
 
+    <div class="hipotesis-hero">
+      <strong>Hipótesis:</strong> si la tasa de búsquedas registradas cada
+      100.000 NNyA refleja la incidencia real del fenómeno, se esperaría
+      que se relacione con la conectividad digital de cada provincia.
+    </div>
+
     <div class="gancho">
       <strong>Córdoba</strong> aparece 9° en volumen de búsquedas.<br>
       <strong>Buenos Aires</strong>, 1°.<br>
@@ -769,7 +804,7 @@
       </p>
       <p>
         El <strong>Protocolo del Programa Alerta SOFÍA</strong> (Resolución 208/2019)
-        es el único de los documentos que revisamos que enumera herramientas
+        es el único de los documentos revisados que enumera herramientas
         digitales. Pero la sección 13.6 —titulada "Herramientas para la
         activación"— lista <strong>canales de difusión de la alerta</strong>: página web,
         perfiles en redes sociales, medios masivos, compañías de telefonía móvil
@@ -780,7 +815,7 @@
         técnica investigativa.
       </p>
       <p>
-        En la búsqueda que hicimos sobre el texto del protocolo, no aparecen
+        En la búsqueda sobre el texto del protocolo, no aparecen
         los términos <strong>geolocalización</strong>, <strong>metadatos</strong>, <strong>IMEI</strong>,
         <strong>GPS</strong>, <strong>historial de navegación</strong> ni <strong>pedidos judiciales a
         compañías telefónicas</strong> con fines de investigación.
@@ -921,7 +956,7 @@
     <div class="definicion-busqueda">
       <p>
         <strong>Antes de mirar las cifras: una búsqueda registrada no es lo mismo
-        que una persona desaparecida.</strong> Con los datos públicos no podemos
+        que una persona desaparecida.</strong> Con los datos públicos no se puede
         saber si una misma persona generó más de una búsqueda.
       </p>
       <p>
@@ -943,28 +978,24 @@
         <title id="titulo-serie">Búsquedas ingresadas al RNIPME por año, 2020 a 2024</title>
         <desc id="desc-serie">Serie 2020-2024: 453 búsquedas en 2020, 726 en 2021, 1.935 en 2022, 3.115 en 2023 y 4.704 en 2024.</desc>
 
-        <!-- Barras -->
         <rect x="40" y="165.6" width="50" height="14.4" fill="#A8B4C0" rx="2"/>
         <rect x="112.5" y="156.8" width="50" height="23.2" fill="#A8B4C0" rx="2"/>
         <rect x="185" y="118.3" width="50" height="61.7" fill="#A8B4C0" rx="2"/>
         <rect x="257.5" y="80.7" width="50" height="99.3" fill="#A8B4C0" rx="2"/>
         <rect x="330" y="30" width="50" height="150" fill="#35506B" rx="2"/>
 
-        <!-- Valores sobre cada barra -->
         <text x="65" y="160" text-anchor="middle" font-size="11" font-family="IBM Plex Sans, sans-serif" fill="#1E2320">453</text>
         <text x="137.5" y="151" text-anchor="middle" font-size="11" font-family="IBM Plex Sans, sans-serif" fill="#1E2320">726</text>
         <text x="210" y="112" text-anchor="middle" font-size="11" font-family="IBM Plex Sans, sans-serif" fill="#1E2320">1.935</text>
         <text x="282.5" y="75" text-anchor="middle" font-size="11" font-family="IBM Plex Sans, sans-serif" fill="#1E2320">3.115</text>
         <text x="355" y="24" text-anchor="middle" font-size="11" font-weight="600" font-family="IBM Plex Sans, sans-serif" fill="#35506B">4.704</text>
 
-        <!-- Años -->
         <text x="65" y="200" text-anchor="middle" font-size="12" font-family="IBM Plex Sans, sans-serif" fill="#35506B">2020</text>
         <text x="137.5" y="200" text-anchor="middle" font-size="12" font-family="IBM Plex Sans, sans-serif" fill="#35506B">2021</text>
         <text x="210" y="200" text-anchor="middle" font-size="12" font-family="IBM Plex Sans, sans-serif" fill="#35506B">2022</text>
         <text x="282.5" y="200" text-anchor="middle" font-size="12" font-family="IBM Plex Sans, sans-serif" fill="#35506B">2023</text>
         <text x="355" y="200" text-anchor="middle" font-size="12" font-weight="600" font-family="IBM Plex Sans, sans-serif" fill="#35506B">2024</text>
 
-        <!-- Línea base -->
         <line x1="30" y1="180" x2="390" y2="180" stroke="#B9B4A8" stroke-width="1"/>
       </svg>
       <p class="epigrafe-serie">
@@ -977,9 +1008,10 @@
       <p class="cita">Fuente: Informe de gestión y estadísticas 2024, sección 2.4.</p>
     </div>
 
+    <p class="titulo-tabla">Búsquedas de NNyA por provincia, 2024</p>
     <p>
-      <span id="total-nacional">—</span> búsquedas de NNyA registradas en 2024 según el RNIPME.
-      Distribución por provincia. Hacé clic en una provincia para ver el detalle.
+      <span id="total-nacional">—</span> búsquedas registradas en total.
+      Hacé clic en una provincia para ver el detalle.
     </p>
 
     <div class="panel">
@@ -1001,6 +1033,11 @@
 
       <div id="detalle-provincia" class="detalle"></div>
 
+      <p class="fuente-tabla">
+        <strong>Fuente:</strong> RNIPME 2024 (Ministerio de Justicia).
+        <strong>Denominador:</strong> proyecciones INDEC por jurisdicción, 2024.
+      </p>
+
       <p class="nota-dato">
         Cuando el número de búsquedas es muy bajo (N&lt;10), no se muestran
         los desgloses por género ni por edad. Eso protege a las personas
@@ -1008,9 +1045,7 @@
       </p>
     </div>
 
-    <h3 style="margin-top: 3rem; font-family: 'Newsreader', serif; font-size: 1.3rem;">
-      Desglose nacional por género y edad
-    </h3>
+    <p class="titulo-tabla" style="margin-top: 3rem;">Desglose nacional por género y tramo etario, 2024</p>
     <p>
       A nivel nacional los números son grandes y permiten desglosar sin riesgo.
     </p>
@@ -1023,6 +1058,10 @@
       </select>
 
       <canvas id="grafico-nacional" style="max-height: 280px; margin-top: 1rem;"></canvas>
+
+      <p class="fuente-tabla">
+        <strong>Fuente:</strong> RNIPME 2024 (Ministerio de Justicia).
+      </p>
     </div>
   </section>
 
@@ -1065,7 +1104,12 @@
         <div class="cociente-descripcion" id="cociente-descripcion"></div>
       </div>
 
+      <p class="titulo-tabla" id="titulo-ranking">Ranking de provincias por cifra absoluta, 2024</p>
       <canvas id="grafico-ranking" style="max-height: 480px;"></canvas>
+
+      <p class="fuente-tabla">
+        <strong>Fuente:</strong> RNIPME 2024 + proyecciones INDEC por jurisdicción, 2024.
+      </p>
 
       <p class="nota-dato" id="nota-criterio">
         Criterio visible: <strong>N≥10 se considera interpretable.</strong>
@@ -1085,7 +1129,7 @@
 
     <p class="huecos-leyenda">
       Los bordes punteados marcan datos que <strong>no existen en fuentes
-      públicas</strong>, verificados contra los documentos que revisamos para
+      públicas</strong>, verificados contra los documentos revisados para
       este proyecto.
     </p>
 
@@ -1125,7 +1169,7 @@
         <div class="hueco-titulo">Rastros digitales durante una búsqueda</div>
         <p class="hueco-texto">
           Qué registros digitales intervienen en una búsqueda no está
-          en los datos públicos que revisamos.
+          en los datos públicos revisados.
         </p>
       </div>
 
@@ -1156,25 +1200,33 @@
   <section class="seccion cierre" id="cierre">
     <h2>Lo que queda abierto</h2>
     <p>
-      En una sociedad que produce más rastros digitales cada año, las
-      búsquedas de NNyA muestran un patrón territorial muy desigual.
-      Con los datos disponibles <strong>no encontramos evidencia de que la
-      conectividad digital explique esa desigualdad</strong>: la correlación
-      entre la tasa de búsquedas y los accesos a internet cada 100 hogares
-      es r = 0,226 sobre 22 provincias (IC 95% aproximado: −0,22 a 0,59),
-      compatible tanto con ninguna relación como con una moderada. Lo que no
-      podemos saber —con los datos públicos— es cuánto refleja diferencias
-      reales del fenómeno y cuánto refleja diferencias de capacidad
-      institucional de registro.
+      En una sociedad que produce más rastros digitales cada año, las tasas de
+      búsqueda de NNyA por provincia varían por un factor de ~4,7× entre el
+      primer y el tercer cuartil. <strong>No hay evidencia de que la
+      conectividad digital explique esa dispersión:</strong> la correlación
+      entre tasa de búsquedas y accesos a internet cada 100 hogares es
+      r = 0,226 sobre 22 provincias (IC 95% aproximado: −0,22 a 0,59),
+      compatible tanto con ninguna relación como con una moderada.
+    </p>
+    <p>
+      Con 22 provincias, solo una relación fuerte habría sido detectable. Esto
+      no prueba que no haya relación: muestra que con los datos públicos
+      disponibles no se puede distinguir entre diferencias reales del fenómeno
+      y diferencias de capacidad institucional de registro. Esa frontera —lo
+      que los datos permiten saber y lo que no— es el hallazgo del proyecto.
     </p>
 
     <div class="fuentes">
       <strong>Fuentes:</strong><br>
-      <a href="https://www.argentina.gob.ar/justicia" target="_blank" rel="noopener">RNIPME 2024</a> — Ministerio de Justicia de la Nación<br>
-      <a href="https://www.argentina.gob.ar/seguridad" target="_blank" rel="noopener">SIFEBU 2024 y Alerta SOFÍA</a> — Ministerio de Seguridad de la Nación<br>
-      <a href="https://www.boletinoficial.gob.ar/detalleAviso/primera/203921/20190322" target="_blank" rel="noopener">Protocolo Programa Alerta SOFÍA</a> — Resolución 208/2019<br>
+      <a href="https://www.argentina.gob.ar/sites/default/files/2019/05/informe_de_gestion_y_estadisticas_2024_rnipme.pdf" target="_blank" rel="noopener">RNIPME 2024</a> — Informe de gestión y estadísticas, Ministerio de Justicia<br>
+      <a href="https://www.argentina.gob.ar/sites/default/files/ministerio-seguridad-argentina-informe-gestion-sifebu-2024.pdf" target="_blank" rel="noopener">SIFEBU 2024</a> — Informe de gestión, Ministerio de Seguridad<br>
+      <a href="https://servicios.infoleg.gob.ar/infolegInternet/anexos/320000-324999/321286/res208.pdf" target="_blank" rel="noopener">Protocolo Programa Alerta SOFÍA</a> — Resolución 208/2019<br>
       <a href="https://www.indec.gob.ar/indec/web/Nivel3-Tema-2-24" target="_blank" rel="noopener">INDEC</a> — Proyecciones de población 2022-2040, Censo 2022<br>
       <a href="https://www.enacom.gob.ar/" target="_blank" rel="noopener">ENACOM</a> — Accesos a internet por provincia, 2024
+      <br><br>
+      <em>Los enlaces de INDEC y ENACOM apuntan a la sección general del
+      organismo. El dataset específico usado se detalla en la descripción
+      metodológica del formulario de inscripción.</em>
     </div>
   </section>
 
@@ -1555,6 +1607,13 @@
       ? 'Búsquedas registradas'
       : 'Tasa cada 100.000 NNyA';
     graficoRank.update();
+
+    const titulo = document.getElementById('titulo-ranking');
+    if (titulo) {
+      titulo.textContent = metricaActual === 'absoluto'
+        ? 'Ranking de provincias por cifra absoluta, 2024'
+        : 'Ranking de provincias por tasa cada 100.000 NNyA, 2024';
+    }
   }
 
   actualizarLeyenda();
