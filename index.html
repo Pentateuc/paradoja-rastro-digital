@@ -488,6 +488,73 @@
     color: #5a4a2a;
   }
 
+  /* ============ GLOSARIO ============ */
+  .glosario-siglas {
+    margin: 1.5rem 0;
+    background: rgba(255,255,255,0.35);
+    border: 1px solid rgba(30,35,32,0.15);
+    border-radius: 4px;
+    padding: 0.8rem 1.2rem;
+  }
+
+  .glosario-siglas summary {
+    cursor: pointer;
+    font-family: 'Newsreader', serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--institucional);
+    padding: 0.4rem 0;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .glosario-siglas summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .glosario-siglas summary::before {
+    content: '▸';
+    font-size: 1rem;
+    transition: transform 0.2s ease;
+    display: inline-block;
+  }
+
+  .glosario-siglas[open] summary::before {
+    transform: rotate(90deg);
+  }
+
+  .glosario-contenido {
+    padding-top: 0.8rem;
+    margin-top: 0.6rem;
+    border-top: 1px dashed rgba(30,35,32,0.2);
+  }
+
+  .glosario-contenido p {
+    font-size: 0.95rem;
+    line-height: 1.55;
+    margin: 0 0 0.6rem;
+    color: var(--tinta);
+  }
+
+  .glosario-contenido p:last-of-type {
+    margin-bottom: 0.4rem;
+  }
+
+  .glosario-contenido p strong {
+    color: var(--institucional);
+  }
+
+  .glosario-contenido .glosario-fuente {
+    font-size: 0.78rem;
+    color: var(--institucional);
+    margin-top: 1rem;
+    padding-top: 0.6rem;
+    border-top: 1px dashed rgba(53,80,107,0.3);
+    line-height: 1.5;
+  }
+
   .cadena-institucional {
     margin: 1.5rem auto;
     max-width: 420px;
@@ -885,6 +952,25 @@
     <div class="nivel">
       <div class="etiqueta-nivel">NIVEL 2</div>
       <h3>Lo que se publica</h3>
+
+      <details class="glosario-siglas">
+        <summary>Siglas y organismos mencionados en este nivel</summary>
+        <div class="glosario-contenido">
+          <p><strong>RNIPME</strong> — Registro Nacional de Información de Personas Menores Extraviadas. Depende del Ministerio de Justicia de la Nación.</p>
+          <p><strong>SIFEBU</strong> — Sistema Federal de Búsqueda de Personas Desaparecidas y Extraviadas. Depende del Ministerio de Seguridad de la Nación.</p>
+          <p><strong>SIFCOP</strong> — Sistema Federal de Comunicaciones Policiales. Base de datos integrada por denuncias policiales u oficios judiciales que retransmite los requerimientos a nivel nacional y en tiempo real.</p>
+          <p><strong>SENNAF</strong> — Secretaría Nacional de la Niñez, Adolescencia y Familia.</p>
+          <p><strong>MPF</strong> — Ministerio Público Fiscal.</p>
+          <p><strong>CNRT</strong> — Comisión Nacional de Regulación del Transporte. La base de SIFEBU coteja de manera automatizada con la de este organismo.</p>
+          <p><strong>DNM</strong> — Dirección Nacional de Migraciones.</p>
+          <p><strong>ANSES</strong> — Administración Nacional de Seguridad Social.</p>
+          <p><strong>RENAPER</strong> — Registro Nacional de las Personas. El SIFEBU consulta constantemente para acceder a información sobre identidad, estado vital y otros datos administrativos.</p>
+          <p><strong>SINTyS</strong> — Sistema de Identificación Nacional Tributario y Social. <em>El nombre completo de la sigla no está desarrollado en los documentos revisados; se incluye porque aparece mencionado entre los organismos con los que el SIFEBU coteja registros.</em></p>
+          <p><strong>ICMEC</strong> — International Centre for Missing &amp; Exploited Children (Centro Internacional para Niños Desaparecidos y Explotados). Organización internacional con la que Argentina firmó un convenio de cooperación en 2016.</p>
+          <p><strong>GMCNgine</strong> — Plataforma segura y privada del ICMEC, descrita en el protocolo como "un sistema innovador e inteligente de búsqueda y comparación de imágenes específico centrado en encontrar NNyA desaparecidos".</p>
+          <p class="glosario-fuente">Fuentes: Informe SIFEBU 2024 (secciones 1.4, 2.1 y anexos) y Protocolo del Programa Alerta SOFÍA (Res. 208/2019, sección 13.6 y notas al pie).</p>
+        </div>
+      </details>
 
       <p>Así se estructura, según el protocolo, la cadena que va de una denuncia a una alerta pública:</p>
 
