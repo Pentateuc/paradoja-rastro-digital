@@ -7,10 +7,10 @@ const datos = {
       "Transgénero": 11
     },
     "edad": {
-      "0-12": 865,
-      "13-15": 2158,
-      "16-17": 1573,
-      "Sin dato": 108
+      "0-12": 871,
+      "13-15": 2171,
+      "16-17": 1562,
+      "Sin dato": 100
     }
   },
   "provincias": [
@@ -99,9 +99,9 @@ const datos = {
       "masculino": 11,
       "transgenero": 0,
       "de_0_a_12": 2,
-      "de_13_a_15": 5,
-      "de_16_a_17": 10,
-      "sin_dato": 0,
+      "de_13_a_15": 7,
+      "de_16_a_17": 5,
+      "sin_dato": 3,
       "pob_0_17": 336557.6,
       "tasa": 5.05
     },
@@ -229,9 +229,9 @@ const datos = {
       "masculino": 43,
       "transgenero": 0,
       "de_0_a_12": 10,
-      "de_13_a_15": 32,
+      "de_13_a_15": 43,
       "de_16_a_17": 25,
-      "sin_dato": 12,
+      "sin_dato": 1,
       "pob_0_17": 435997.4,
       "tasa": 18.12
     },
@@ -319,9 +319,9 @@ const datos = {
       "femenino": 4,
       "masculino": 2,
       "transgenero": 0,
-      "de_0_a_12": 0,
+      "de_0_a_12": 6,
       "de_13_a_15": 0,
-      "de_16_a_17": 6,
+      "de_16_a_17": 0,
       "sin_dato": 0,
       "pob_0_17": 478498.4,
       "tasa": 1.25
